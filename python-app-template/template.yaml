@@ -1,0 +1,34 @@
+name: python-app-template
+description: Create python template with Poetry and Pytest.
+types:
+  - app-template
+inputs:
+  - label: Project Name
+    type: text
+    name: project_name
+    default: project-name
+  - label: Project Version
+    type: text
+    name: project_version
+    default: "1.0.0"
+    global: true
+  - label: Project Description
+    type: text
+    name: project_description
+    default: "Description of your project"
+  - label: Author Name
+    type: text
+    name: author_name
+    default: "John Doe"
+  - label: Author E-Mail
+    type: text
+    name: author_email
+    default: "johndoe@mail.com"
+global-computed-inputs:
+  project_name_sanitized: "{{inputs.project_name|replace('-', '_')|lower}}"
+hooks:
+  - type: run
+    trigger: before-input
+    commands:
+      - pip3 install poetry
+      - pip3 install virtualenv

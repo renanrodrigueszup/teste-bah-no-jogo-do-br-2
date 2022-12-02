@@ -1,0 +1,12 @@
+type: app
+description: Criar uma CLI personalizada em Python.
+template: stackspot-python-stack/python-app-template
+inputs:
+  project_version: "1.0.0"
+  project_description: "Basic Python CLI"
+  author_name: "John Doe"
+  author_email: "johndoe@mail.com"
+plugins:
+  - plugin: stackspot-python-stack/cli-plugin
+    inputs:
+      cli_command_name: mycli

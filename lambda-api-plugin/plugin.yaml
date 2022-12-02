@@ -1,0 +1,63 @@
+name: logger-plugin
+description: Plugin responsável por adicionar a dependência do @quickweb/logger para gerar logs de aplicações Web com Angular
+display-name: Logger
+picture: plugin.png
+category: Frontend # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#category
+compatibility:
+  - Angular
+about: docs/about.md
+usage: docs/usage.md
+use-case: docs/use-case.md
+implementation: docs/implementation.md
+types:
+  - app
+technologies: # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#technologies
+  - Typescript
+inputs:
+  - label: "Deseja instalar a dependência logger?"
+    type: bool
+    name: install_dependencies
+    global: true
+    default: true
+  - label: "insira a key do appdynamics"
+    type: text
+    name: dynamics_key
+    global: true
+    default: "AA-AAA-AAA"
+    pattern: '[A-Z]+-[A-Z]+-[A-Z]+'
+hooks:
+  - type: edit
+    trigger: after-render
+    path: "package.json"
+    changes:
+     - search:
+        pattern: "dependencies"
+        insert-after:
+          snippet: snippets/loggerDependencie.txt
+  - type: edit
+    trigger: after-render
+    path: "src/app/app.module.ts"
+    changes:
+     - search:
+        snippet: snippets/search/searchImports.txt
+        replace-by:
+          snippet: snippets/imports.txt
+  - type: edit
+    trigger: after-render
+    path: "src/app/app.module.ts"
+    changes:
+      - insert:
+          line: 0
+          snippet: snippets/topImports.txt
+  - type: run
+    trigger: after-render
+    commands:
+      - echo Instalando dependências
+    condition:
+      variable: install_dependencies
+      operator: "=="
+      value: true
+    windows:
+        - cmd /c set npm_config_registry=https://artifactory.prod.aws.cloud.ihf/artifactory/api/npm/npm-devel/ && npm install --legacy-peer-deps
+      mac:
+        - npm install --registry=https://artifactory.prod.aws.cloud.ihf/artifactory/api/npm/npm-devel/ --legacy-peer-deps

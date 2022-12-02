@@ -1,0 +1,42 @@
+name: cli-plugin
+description: Add CLI to a existing STK Python project.
+display-name: CLI 
+picture: https://avatars.githubusercontent.com/u/13245136?s=200&v=4
+category: backend # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#category
+compatibility:
+  - python
+about: docs/about.md
+usage: docs/usage.md
+use-case: docs/use-case.md
+implementation: docs/implementation.md
+technologies: # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#technologies
+  - "Python"
+types:
+  - app
+inputs:
+  - label: CLI Command Name
+    type: text
+    name: cli_command_name
+    default: mycli
+global-computed-inputs:
+  cli_command_name_lower: "{{inputs.cli_command_name|lower}}"
+hooks:
+  - type: edit
+    trigger: before-render
+    path: "pyproject.toml"
+    changes:
+      - insert:
+          line: -1
+          snippet: "snippets/poetryscripts"
+          when:
+            not-exists: "{{cli_command_name_lower}} = '{{project_name_sanitized}}.cli:main'"
+      - search:
+          string: "[tool.poetry.dependencies]"
+          replace-by:
+            snippet: "snippets/clickdependency"
+          when:
+            not-exists: "click"
+  - type: run
+    trigger: after-render
+    commands:
+      - stk run env-create

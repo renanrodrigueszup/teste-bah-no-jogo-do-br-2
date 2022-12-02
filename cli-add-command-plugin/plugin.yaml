@@ -1,0 +1,81 @@
+name: cli-add-command-plugin
+description: Add new command to a existing CLI project.
+display-name: CLI Add Command
+picture: https://avatars.githubusercontent.com/u/13245136?s=200&v=4
+category: backend # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#category
+compatibility:
+  - python
+about: docs/about.md
+usage: docs/usage.md
+use-case: docs/use-case.md
+implementation: docs/implementation.md
+technologies: # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#technologies
+  - "Python"
+types:
+  - app
+requirements:
+  - stackspot-python-stack/cli-add-command-plugin
+inputs:
+  - label: command
+    type: text
+    name: command
+    default: command_name
+  - label: command_description
+    type: text
+    name: command_description
+    default: Describe what the main command does.
+  - label: subcommand
+    type: text
+    name: subcommand
+    default: subcommand_name
+  - label: subcommand_description
+    type: text
+    name: subcommand_description
+    default: The description for your subcommand.
+  - label: argument
+    type: text
+    name: argument
+    default: argument_name
+hooks:
+  - type: edit
+    trigger: before-render
+    path: "src/{{project_name_sanitized}}/cli.py"
+    changes:
+      - insert:
+          line: 2
+          value: "from {{project_name_sanitized}}.commands.{{inputs.command}} import {{inputs.command}}\n"
+          when:
+            not-exists: "from {{project_name_sanitized}}.commands.{{inputs.command}} import {{inputs.command}}"
+      - search:
+          string: "@cli.result_callback()"
+          insert-before:
+            value: "cli.add_command({{inputs.command}})\n\n"
+          when:
+            not-exists: "cli.add_command({{inputs.command}})"
+  - type: edit
+    trigger: after-render
+    path: "src/{{project_name_sanitized}}/commands/{{inputs.command}}/__init__.py"
+    changes:
+      - insert:
+          line: 1
+          value: "import click"
+          when:
+            not-exists: "import click"
+      - search:
+          string: "import click"
+          insert-after:
+            value: "from {{project_name_sanitized}}.commands.{{inputs.command}}.{{inputs.subcommand}} import {{inputs.subcommand}}\n"
+          when:
+            not-exists: "from {{project_name_sanitized}}.commands.{{inputs.command}}.{{inputs.subcommand}} import {{inputs.subcommand}}"
+      - insert:
+          line: 6
+          snippet: snippets/commandgroup
+          when:
+            not-exists: "def {{inputs.command}}():"
+      - insert:
+          line: -1
+          value: "\n\n{{inputs.command}}.add_command({{inputs.subcommand}})"
+          when:
+            not-exists: "{{inputs.command}}.add_command({{inputs.subcommand}})"
+  
+  

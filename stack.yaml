@@ -1,0 +1,17 @@
+description: Develop and publish your custom CLI or Lambda APIs with Stack Python.
+name: stackspot-python-stack
+display-name: Python Stack 1.0.1
+picture: stack.png
+category: Backend # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#category
+compatibility: # Put a list of technologies compatible with the stack
+  - Python
+technologies: # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#technologies
+  - Python
+about: docs/about.md
+use-cases:
+  - title: Create customizable CLI using Python
+    content: docs/use-case-cli.md
+    stackfile: stackfiles/create_cli.yaml
+  - title: Create Lambda API using Python 
+    content: docs/use-case-api.md
+    stackfile: stackfiles/create_api.yaml
